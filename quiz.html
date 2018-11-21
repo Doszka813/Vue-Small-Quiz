@@ -1,0 +1,186 @@
+
+<html>
+<body>
+  <!-- Vue works with this div -->
+<div id="app">
+  <h1>{{ quiz.title }}</h1>
+  <div v-for="(question, index) in quiz.questions">
+    <div v-show="index === questionIndex">
+      <h2>{{ question.text }}</h2>
+      <ol>
+        <li v-for="(response, ind) in question.responses">
+          <label>
+           <input type="radio" 
+              v-bind:value="response.text" 
+              v-bind:name="response.text" 
+              v-model="userResponses[index]"> {{response.text}}
+          </label>
+        </li>
+      </ol>
+      <button v-if="questionIndex > 0" v-on:click="prev">
+        prev
+      </button>
+      <button v-on:click="next">
+        next
+      </button>
+    </div>
+  </div>
+ <div v-show="questionIndex === quiz.questions.length">
+    <h2>
+    Quiz finished
+  </h2>
+    <p>
+      Total score: {{ score() }} / {{ quiz.questions.length }}
+    </p>
+  </div>
+</div>
+  
+  <script src="https://vuejs.org/js/vue.js"></script>
+  <script>
+  window.onload=function(){
+    var quiz = {
+      title: 'Science Quiz',
+      questions: [
+        {
+          text: 'Which kind of waves are used to make and receive cellphone calls?',
+          responses: [{
+              text: 'Radio waves',
+              correct: true
+            },
+            {
+              text: 'Visible light waves',
+              correct: false
+            },
+            {
+              text: 'Sound waves',
+              correct: false
+            },
+            {
+              text: 'Gravity waves',
+              correct: false
+            }
+          ]
+        },
+        {
+          text: 'What does a light-year measure?',
+          responses: [{
+              text: 'Brightness',
+              correct: false
+            },
+            {
+              text: 'Time',
+              correct: false
+            },
+            {
+              text: 'Distance',
+              correct: true
+            },
+            {
+              text: 'Weight',
+              correct: false
+            }
+          ]
+        },
+        {
+          text: 'The loudness of a sound is determined by what property of a sound wave?',
+          responses: [{
+              text: 'Frequency',
+              correct: false
+            },
+            {
+              text: 'Wavelength',
+              correct: false
+            },
+            {
+              text: 'Velocity or rate of change',
+              correct: false
+            },
+            {
+              text: 'Amplitude or height',
+              correct: true
+            }
+          ]
+        },
+        {
+          text: 'Which of these elements is needed to make nuclear energy and nuclear weapons?',
+          responses: [{
+              text: 'Sodium chloride',
+              correct: false
+            },
+            {
+              text: 'Uranium',
+              correct: true
+            },
+            {
+              text: 'Nitrogen',
+              correct: false
+            },
+            {
+              text: 'Carbon dioxide',
+              correct: false
+            }
+          ]
+        },
+        {
+          text: 'Which of these people developed the polio vaccine?',
+          responses: [{
+              text: 'Marie Curie',
+              correct: false
+            },
+            {
+              text: 'Isaac Newton',
+              correct: false
+            },
+            {
+              text: 'Albert Einstein',
+              correct: false
+            },
+            {
+              text: 'Jonas Salk',
+              correct: true
+            }
+          ]
+        }
+      ]
+    };
+    
+    new Vue({
+      el: '#app', // Vue works with this div (see line 4)
+      data: { 
+        title: 'Hello.', 
+        quiz: quiz,     
+        questionIndex: 0,    
+        userResponses: Array(quiz.questions.length).fill(false)
+      },
+      methods: {
+        next: function() {
+          this.questionIndex++;
+        },
+        prev: function() {
+          this.questionIndex--;
+        },
+        score: function() {
+          let correctCount = 0;
+          let self = this;
+
+          this.quiz.questions.filter(function(val, i) {
+            val.userAnswerCorrect = false;
+            val.userAnswer = self.userResponses[i];
+
+            val.responses.filter(function(ans, j) {
+              if (ans.correct == true && val.userAnswer == ans.text) {
+                correctCount++;
+              }
+            })
+          });
+          return correctCount;
+        },
+        start: function() {
+          this.userResponses = [];
+          this.questionIndex = 0;
+        }
+      },
+    });
+  }
+  </script>
+</body>
